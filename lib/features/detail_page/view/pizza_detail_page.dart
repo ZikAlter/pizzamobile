@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pizza_mobile/features/menu_page/menu_page.dart';
+import 'package:pizza_mobile/repositories/basket_model.dart';
+import 'package:provider/provider.dart';
 
 class PizzaDetailPage extends StatelessWidget {
   final Pizza pizza;
@@ -72,7 +74,12 @@ class PizzaDetailPage extends StatelessWidget {
             const SizedBox(height: 16), // Добавляем отступ между карточкой и кнопкой
             ElevatedButton(
               onPressed: () {
-                // Логика добавления в корзину
+                context.read<BasketModel>().addToBasket(pizza);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Добавлено в корзину: ${pizza.name}'),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 255, 121, 49), // Цвет кнопки

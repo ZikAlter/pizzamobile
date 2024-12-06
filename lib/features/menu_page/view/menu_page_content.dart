@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+//import 'package:pizza_mobile/features/basket_page/basket_page.dart';
 import 'package:pizza_mobile/features/detail_page/detail_page.dart';
+import 'package:pizza_mobile/repositories/basket_model.dart';
+import 'package:provider/provider.dart';
 
 class Pizza {
   final String name;
@@ -70,98 +73,101 @@ class MenuPageContent extends StatelessWidget {
     ),
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView.builder(
-        padding: const EdgeInsets.all(6),
-        itemCount: pizzas.length,
-        itemBuilder: (context, index) {
-          final pizza = pizzas[index];
-          return GestureDetector(
-            onTap: () {
-              // Переход на экран с подробным описанием
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PizzaDetailPage(pizza: pizza),
-                ),
-              );
-            },
-            child: Card(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: ListView.builder(
+      padding: const EdgeInsets.all(6),
+      itemCount: pizzas.length,
+      itemBuilder: (context, index) {
+        final pizza = pizzas[index];
+
+        return GestureDetector(
+          onTap: () {
+            // Переход на экран с подробным описанием
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PizzaDetailPage(pizza: pizza),
               ),
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(25),
-                      child: Image.network(
-                        pizza.imageUrl,
-                        width: 110,
-                        height: 120,
-                        fit: BoxFit.cover,
-                      ),
+            );
+          },
+          child: Card(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            elevation: 4,
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: Image.network(
+                      pizza.imageUrl,
+                      width: 110,
+                      height: 120,
+                      fit: BoxFit.cover,
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            pizza.name,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          pizza.name,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            pizza.description,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w500,
-                            ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          pizza.description,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
                           ),
-                          const SizedBox(height: 8),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // Добавить логику покупки
-                                print('Добавлено в корзину: ${pizza.name}');
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(255, 250, 185, 150),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
+                        ),
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              context.read<BasketModel>().addToBasket(pizza);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Добавлено в корзину: ${pizza.name}'),
                                 ),
-                              ),
-                              child: Text(
-                                '${pizza.price.toStringAsFixed(0)} руб.',
-                                style: const TextStyle(fontSize: 14),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color.fromARGB(255, 250, 185, 150),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
                               ),
                             ),
+                            child: Text('${pizza.price.toStringAsFixed(0)} руб.'),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
+          ),
+        );
+      },
+    ),
+  );
+}
+
 }
 
 
